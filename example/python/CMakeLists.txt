@@ -14,8 +14,13 @@ add_library(example SHARED example.cpp
   ${PROJECT_BINARY_DIR}/docstrings/cpp/docstrings.cpp)
 add_dependencies(example PyxygenExample-docstrings)
 
-target_link_libraries(example
-  ${Boost_PYTHON_LIBRARY} ${PYTHON_LIBRARIES})
+target_link_libraries(example ${PYTHON_LIBRARIES}
+                      ${Boost_PYTHON${USE_BOOST_PYTHON_VERSION}_LIBRARY})
 
-set_target_properties(example PROPERTIES PREFIX "" OUTPUT_NAME "_example")
+set_target_properties(example PROPERTIES
+  PREFIX "" OUTPUT_NAME "_example"
+  LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/example)
+configure_file(__init__.py
+               ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/example/__init__.py)
+
 

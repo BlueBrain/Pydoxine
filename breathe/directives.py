@@ -25,6 +25,12 @@ import fnmatch
 import re
 import subprocess
 
+from docutils import nodes
+
+from . import doxygen_mangling
+
+class DocStringNode(nodes.General, nodes.Element) :
+    pass
 
 class NoMatchingFunctionError(BreatheError):
     pass
@@ -69,6 +75,7 @@ class DoxygenFunctionDirective(BaseDirective):
         "path": unchanged_required,
         "project": unchanged_required,
         "outline": flag,
+        "no-header" : flag,
         "no-link": flag,
         }
     has_content = False
@@ -84,7 +91,7 @@ class DoxygenFunctionDirective(BaseDirective):
 
         # Separate possible arguments (delimited by a "(") from the namespace::name
         match = re.match(r"([^(]*)(.*)", self.arguments[0])
-        namespaced_function, args = match.group(1), match.group(2)
+        namespaced_function, signature = match.group(1), match.group(2)
 
         # Split the namespace and the function name
         try:
@@ -105,7 +112,7 @@ class DoxygenFunctionDirective(BaseDirective):
             return warning.warn('doxygenfunction: %s' % e)
 
         # Extract arguments from the function name.
-        args = self.parse_args(args)
+        args = self.parse_args(signature)
 
         finder_filter = self.filter_factory.create_function_finder_filter(namespace, function_name)
 
@@ -166,8 +173,27 @@ class DoxygenFunctionDirective(BaseDirective):
             )
         filter_ = self.filter_factory.create_outline_filter(self.options)
 
-        return self.render(node_stack, project_info, filter_, target_handler, NullMaskFactory(),
-                           self.directive_args)
+        node = DocStringNode()
+        top_node = node_stack[0]
+        node['type'] = 'function'
+        node['doxygen_id'] = top_node.get_id()
+
+        definition = top_node.get_definition()
+        # Not sure if this works always (e.g. if templates are involved), but
+        # at least works for other non templated member methods
+        node['unmangled_name'] = definition.split()[-1]
+        scope_type, scope, id = doxygen_mangling.unmangleId(top_node.get_id())
+        node['unmangled_fqname'] = (('' if scope == '' else scope + '::') +
+                                    (id if id != '' else top_node.get_name()) +
+            signature)
+
+        nodes = self.render(node_stack, project_info, filter_, target_handler, NullMaskFactory(),
+                            self.directive_args)
+        if 'no-header' in self.options :
+            nodes = nodes[1:]
+        node += nodes
+
+        return [node]
 
     def parse_args(self, function_description):
         # Strip off trailing qualifiers
@@ -273,6 +299,7 @@ class DoxygenClassLikeDirective(BaseDirective):
         "show": unchanged_required,
         "outline": flag,
         "no-link": flag,
+        "no-header" : flag,
         }
     has_content = False
 
@@ -307,9 +334,24 @@ class DoxygenClassLikeDirective(BaseDirective):
             )
         filter_ = self.filter_factory.create_class_filter(name, self.options)
 
+        node_stack = matches[0]
+
+        node = DocStringNode()
+        top_node = node_stack[0]
+        node['type'] = 'class'
+        node['doxygen_id'] = top_node.refid
+        node['unmangled_name'] = top_node.get_name()
+        scope_type, scope, id = doxygen_mangling.unmangleId(top_node.refid)
+        node['unmangled_fqname'] = (('' if scope == '' else scope + '::') +
+                                    (id if id != '' else top_node.get_name()))
+
         mask_factory = NullMaskFactory()
-        return self.render(matches[0], project_info, filter_, target_handler, mask_factory,
-                           self.directive_args)
+        nodes = self.render(node_stack, project_info, filter_, target_handler, mask_factory,
+                            self.directive_args)
+        if 'no-header' in self.options :
+            nodes = nodes[1:]
+        node += nodes
+        return [node]
 
 
 class DoxygenClassDirective(DoxygenClassLikeDirective):
@@ -435,6 +477,7 @@ class DoxygenBaseItemDirective(BaseDirective):
         "path": unchanged_required,
         "project": unchanged_required,
         "outline": flag,
+        "no-header" : flag,
         "no-link": flag,
         }
     has_content = False
@@ -481,10 +524,24 @@ class DoxygenBaseItemDirective(BaseDirective):
         filter_ = self.filter_factory.create_outline_filter(self.options)
 
         node_stack = matches[0]
-        mask_factory = NullMaskFactory()
-        return self.render(node_stack, project_info, filter_, target_handler, mask_factory,
-                           self.directive_args)
 
+        node = DocStringNode()
+        top_node = node_stack[0]
+        node['type'] = 'class'
+        node['doxygen_id'] = top_node.get_id()
+        node['unmangled_name'] = top_node.get_name()
+        scope_type, scope, id = doxygen_mangling.unmangleId(top_node.get_id())
+        node['unmangled_fqname'] = (('' if scope == '' else scope + '::') +
+                                    (id if id != '' else top_node.get_name()))
+
+        mask_factory = NullMaskFactory()
+        nodes = self.render(node_stack, project_info, filter_, target_handler, mask_factory,
+                            self.directive_args)
+        if 'no-header' in self.options :
+            nodes = nodes[1:]
+        node += nodes
+
+        return [node]
 
 class DoxygenVariableDirective(DoxygenBaseItemDirective):
 
@@ -844,3 +901,14 @@ def setup(app):
     app.connect("env-get-outdated", file_state_cache.get_outdated)
 
     app.connect("env-purge-doc", file_state_cache.purge_doc)
+
+    def visit_docstring_node(self, node):
+        raise()
+
+    def depart_docstring_node(self, node):
+        raise()
+
+    app.add_node(DocStringNode,
+                 html=(visit_docstring_node, depart_docstring_node),
+                 latex=(visit_docstring_node, depart_docstring_node),
+                 text=(visit_docstring_node, depart_docstring_node))

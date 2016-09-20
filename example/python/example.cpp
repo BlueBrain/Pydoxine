@@ -5,6 +5,8 @@
 using namespace boost::python;
 using namespace example;
 
+BaseExample::Things BaseExample::theThing;
+
 #include "docstrings.h"
 
 void (module::Example::*Example_publicMethod1)() =
@@ -28,6 +30,10 @@ class_<BaseExample> baseExampleWrapper(
         "Things", DOXY_ENUM(example::BaseExample::Things));
     things.value("FOO", BaseExample::THING_FOO);
     things.value("BAR", BaseExample::THING_BAR);
+
+    baseExampleWrapper
+        .def_readonly("finished", &BaseExample::theThing,
+                      DOXY_VAR(example::BaseExample::theThing));
 }
 
 scope module = class_<dummy_namespace>("module", no_init);

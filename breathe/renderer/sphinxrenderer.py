@@ -1132,6 +1132,7 @@ class SphinxRenderer(object):
     }
 
     def render(self, node, context=None):
+
         saved_context = self.context
         self.set_context(context if context else self.context.create_child_context(node))
         result = []

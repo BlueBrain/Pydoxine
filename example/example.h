@@ -36,6 +36,9 @@ public:
         THING_BAR = 1 //!< A bar thing
     #endif
     };
+
+    /** A static class member. */
+    static Things theThing;
 };
 
 namespace module
@@ -47,14 +50,14 @@ namespace module
 @ingroup Main
 
 And this the long
-- hola
-- lista
+  - hola
+  - lista
 */
 class Example : public BaseExample
 {
 public:
     /**
-       A nestexd class.
+       A nested class.
 
        This is an opaque type.
     */

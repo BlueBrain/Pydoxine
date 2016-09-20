@@ -1,4 +1,5 @@
 from sphinx.builders import Builder
+import sphinx.addnodes
 from six import StringIO
 import xml2rst
 import re
@@ -6,6 +7,9 @@ import os
 import sys
 
 string_type = str if  sys.version_info.major == 3 else unicode
+
+xml2rst.setDefaultOptions()
+mainXsltF = open(os.path.dirname(__file__) + '/xml2rst.xsl','r')
 
 def mangleCPPIdentifier(id) :
     out = StringIO.StringIO()
@@ -28,6 +32,72 @@ def mangleCPPIdentifier(id) :
                 out.write('_')
             underscore = not underscore
     return out.read()
+
+def append_text(output, nodes):
+    if type(nodes) == sphinx.addnodes.desc:
+        assert(type(nodes[1]) == sphinx.addnodes.desc_content)
+        nodes = nodes[1]
+
+    whitespace = re.compile('^[\s]*$')
+    breathe_directive = re.compile('[\s]*\.\. class:: [a-z]+[\s]*$')
+
+    for node in nodes:
+        # Documentation of enum values is really special because they sphinx
+        # rendering intersperses this desc and index nodes that xml2rst can't
+        # handle.
+        # The following code tries to deal with that.
+        if type(node) == sphinx.addnodes.index:
+            # This can be ignored, we don't need it at all
+            continue
+        if type(node) == sphinx.addnodes.desc:
+            # This is the enum value name
+            desc_name = node[0][1]
+            assert(type(desc_name) == sphinx.addnodes.desc_name)
+            output.write("- " + desc_name[0] + ": ")
+            # And this is the description
+            desc_content = node[1]
+            assert(type(desc_content) == sphinx.addnodes.desc_content)
+            append_text(output, desc_content)
+            continue
+
+        domtree=node.asdom()
+        inF = StringIO()
+        domtree.writexml(inF, indent="", addindent="", newl="")
+        inF.seek(0)
+
+        outF = StringIO()
+        xml2rst.convert(inF=inF, outF=outF, mainXsltF=mainXsltF)
+        outF.seek(0)
+        empty_line = False
+
+        comment = StringIO()
+        empty_comment = True
+        for line in outF.read().split('\n') :
+            # Skipping second and following empty lines
+            #if whitespace.match(line):
+            #    empty_line = True
+            #    continue
+            if breathe_directive.match(line):
+                continue
+
+            if empty_line and not empty_comment :
+                comment.write('\\n')
+            empty_line = False
+            empty_comment = False
+            # Quoting some characters
+            line = re.sub('\\\\','\\\\\\\\', line)
+            line = re.sub('\t','\\\\t', line)
+            line = re.sub('"','\\\\"', line)
+            line = re.sub('([a-zA-Z])::([a-zA-Z])','\\1.\\2', line)
+
+            comment.write(line)
+            comment.write('\\n')
+        comment.seek(0)
+        output.write(comment.read())
+        inF.close()
+        outF.close()
+
+
 
 class CDocstringBuilder(Builder) :
     """
@@ -54,10 +124,6 @@ class CDocstringBuilder(Builder) :
 
     def write_doc(self, docname, doctree) :
 
-        xml2rst.setDefaultOptions()
-        this_file_path = os.path.dirname(__file__)
-        mainXsltF = open(this_file_path + '/xml2rst.xsl','r')
-
         comments = StringIO()
         # Sorting the names alphabetically to minimize changes over reviews.
         nodes = []
@@ -68,42 +134,9 @@ class CDocstringBuilder(Builder) :
             nodes.append((node['unmangled_fqname'], node))
         nodes.sort()
 
-        for name, node in nodes:
+        for name, node_stack in nodes:
             comments.write('m["%s"] = "' % name)
-
-            for node in node :
-                domtree=node.asdom()
-                inF = StringIO()
-                domtree.writexml(inF,indent="", addindent="",newl="")
-                inF.seek(0)
-                outF = StringIO()
-                xml2rst.convert(inF = inF, outF = outF, mainXsltF = mainXsltF)
-                outF.seek(0)
-                empty_line = False
-                regex = re.compile('^[\s]*$')
-
-                comment = StringIO()
-                empty_comment = True
-                for line in outF.read().split('\n') :
-                    # Skipping second and following empty lines
-                    if regex.match(line) :
-                        empty_line = True
-                    else :
-                        if empty_line and not empty_comment :
-                            comment.write('\\n')
-                        empty_line = False
-                        empty_comment = False
-                        # Quoting some characters
-                        line = re.sub('\\\\','\\\\\\\\', line)
-                        line = re.sub('\t','\\\\t', line)
-                        line = re.sub('"','\\\\"', line)
-                        comment.write(line)
-                        comment.write('\\n')
-                comment.seek(0)
-                comments.write(comment.read())
-                inF.close()
-                outF.close()
-
+            append_text(comments, node_stack[0])
             comments.write('";\n')
 
         out = open(self.app.config.cpp_docstrings_out_file, 'w')

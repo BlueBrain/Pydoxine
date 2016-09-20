@@ -77,22 +77,27 @@ index = open('index.rst', 'w')
 for f, s in functions :
     if s == '' :
         index.write('.. doxygenfunction:: %s\n'
-                    '   :project: ${CMAKE_PROJECT_NAME}\n\n' % f)
+                    '   :no-header:\n'
+                    '   :project: ${PROJECT_NAME}\n\n' % f)
     else :
         index.write('.. doxygenfunction:: %s%s\n'
-                    '   :project: ${CMAKE_PROJECT_NAME}\n\n' % (f, s[:-1]))
+                    '   :no-header:\n'
+                    '   :project: ${PROJECT_NAME}\n\n' % (f, s[:-1]))
 
 for e in enums :
     index.write('.. doxygenenum:: %s\n'
-                '   :project: ${CMAKE_PROJECT_NAME}\n\n' % e)
+                '   :no-header:\n'
+                '   :project: ${PROJECT_NAME}\n\n' % e)
 
 for c in classes :
     index.write('.. doxygenclass:: %s\n'
                 '   :no-link:\n'
-                '   :project: ${CMAKE_PROJECT_NAME}\n\n' % c)
+                '   :no-header:\n'
+                '   :project: ${PROJECT_NAME}\n\n' % c)
 
 for c in variables :
     index.write('.. doxygenvariable:: %s\n'
                 '   :no-link:\n'
-                '   :project: ${CMAKE_PROJECT_NAME}\n\n' % c)
+                '   :no-header:\n'
+                '   :project: ${PROJECT_NAME}\n\n' % c)
 
