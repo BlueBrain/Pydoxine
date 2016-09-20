@@ -1,0 +1,98 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# Loosely based on a script from OpenRAVE
+# Copyright (C) 2010 Rosen Diankov (rosen.diankov@gmail.com)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+import os, sys
+import fnmatch
+from optparse import OptionParser
+sys.path.append('${_docstrings_path}')
+import re
+
+# Code from http://stackoverflow.com/questions/241327/python-snippet-to-remove-c-and-c-comments
+def comment_remover(text):
+    def replacer(match):
+        s = match.group(0)
+        if s.startswith('/'):
+            return ""
+        else:
+            return s
+    pattern = re.compile(
+        r'//.*?$|/\*.*?\*/|\'(?:\\.|[^\\\'])*\'|"(?:\\.|[^\\"])*"',
+        re.DOTALL | re.MULTILINE
+    )
+    return re.sub(pattern, replacer, text)
+
+
+xml_filepath = sys.argv[1]
+boost_python_sources = sys.argv[2:]
+
+functions = []
+enums = []
+classes = []
+variables = []
+
+for filename in boost_python_sources :
+      # brief+detailed descriptions only, do not include entire scope
+      rawcppdata = open(filename, 'r').read()
+
+      # preprocessing the input filename to remove comments
+      rawcppdata = comment_remover(rawcppdata)
+
+      functions_temp = re.findall('DOXY_FN\(\s*([\w:]*)\s*(\(.*\))?\)',
+                                  rawcppdata)
+      while len(functions_temp) > 0 and functions_temp[0] == 'name':
+          functions_temp.pop(0) # remove the #define's
+      functions += set(functions_temp)
+
+      enums_temp = re.findall('DOXY_ENUM\(\s*([\w:]*)\s*\)', rawcppdata)
+      while len(enums_temp) > 0 and enums_temp[0] == 'name':
+          enums_temp.pop(0) # remove the #define's
+      enums += enums_temp
+
+      classes_temp=re.findall('DOXY_CLASS\(\s*([\w:]*)\s*\)',rawcppdata)
+      while len(classes_temp) > 0 and classes_temp[0] == 'name':
+          classes_temp.pop(0) # remove the #define's
+      classes += classes_temp
+
+      # This works for member and non member variables
+      vars_temp=re.findall('DOXY_VAR\(\s*([\w:]*)\s*\)',rawcppdata)
+      while len(vars_temp) > 0 and vars_temp[0] == 'name':
+          vars_temp.pop(0) # remove the #define's
+      variables += vars_temp
+
+
+index = open('index.rst', 'w')
+
+for f, s in functions :
+    if s == '' :
+        index.write('.. doxygenfunction:: %s\n'
+                    '   :project: ${CMAKE_PROJECT_NAME}\n\n' % f)
+    else :
+        index.write('.. doxygenfunction:: %s%s\n'
+                    '   :project: ${CMAKE_PROJECT_NAME}\n\n' % (f, s[:-1]))
+
+for e in enums :
+    index.write('.. doxygenenum:: %s\n'
+                '   :project: ${CMAKE_PROJECT_NAME}\n\n' % e)
+
+for c in classes :
+    index.write('.. doxygenclass:: %s\n'
+                '   :no-link:\n'
+                '   :project: ${CMAKE_PROJECT_NAME}\n\n' % c)
+
+for c in variables :
+    index.write('.. doxygenvariable:: %s\n'
+                '   :no-link:\n'
+                '   :project: ${CMAKE_PROJECT_NAME}\n\n' % c)
+

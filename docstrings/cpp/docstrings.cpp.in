@@ -1,0 +1,35 @@
+#include "docstrings.h"
+
+#include <map>
+
+namespace ${PROJECT_namespace}
+{
+namespace docstrings
+{
+
+void initDocStrings(std::map<std::string,std::string>& comments);
+
+const char *getDoxygenComment(const std::string &key)
+{
+    static std::map<std::string, std::string> s_comments;
+
+    if (s_comments.empty())
+        initDocStrings(s_comments);
+
+    std::map<std::string, std::string>::const_iterator c =
+        s_comments.find(key);
+    if (c == s_comments.end())
+    {
+        std::cerr << "Warning: Doxygen to Docstring not found for key: " << key
+                  << std::endl;
+        return "";
+    }
+
+    return c->second.c_str();
+}
+
+#include "init_docstrings.cpp"
+
+}
+}
+

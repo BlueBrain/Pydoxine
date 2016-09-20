@@ -1,0 +1,3 @@
+git remote add -f breathe https://github.com/michaeljones/breathe.git
+git read-tree --prefix=breathe/ -u breathe/master:breathe
+git commit -m "Merging breathe/breathe
