@@ -92,10 +92,10 @@ pygments_style = 'sphinx'
 # Options for breathe extension
 # -----------------------------
 
-breathe_projects = {"${CMAKE_PROJECT_NAME}":"${PROJECT_BINARY_DIR}/docstrings/xml/"}
+breathe_projects = {"${PROJECT_NAME}":"${PROJECT_BINARY_DIR}/docstrings/xml/"}
 
 #breathe_default_project = "tinyxml"
-breathe_default_project = "${CMAKE_PROJECT_NAME}"
+breathe_default_project = "${PROJECT_NAME}"
 
 breathe_domain_by_extension = {"h" : "cpp"}
 
