@@ -53,7 +53,7 @@ def append_text(output, nodes):
             # This is the enum value name
             desc_name = node[0][1]
             assert(type(desc_name) == sphinx.addnodes.desc_name)
-            output.write("- " + desc_name[0] + ": ")
+            output.write("* " + desc_name[0] + ": ")
             # And this is the description
             desc_content = node[1]
             assert(type(desc_content) == sphinx.addnodes.desc_content)
@@ -73,10 +73,6 @@ def append_text(output, nodes):
         comment = StringIO()
         empty_comment = True
         for line in outF.read().split('\n') :
-            # Skipping second and following empty lines
-            #if whitespace.match(line):
-            #    empty_line = True
-            #    continue
             if breathe_directive.match(line):
                 continue
 
