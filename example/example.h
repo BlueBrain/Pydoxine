@@ -44,6 +44,9 @@ public:
 namespace module
 {
 
+/** A free enum with just one value */
+enum Enum { ENUM_ONE };
+
 /**
 \brief This is the brief
 

@@ -36,6 +36,9 @@ class_<BaseExample> baseExampleWrapper(
                       DOXY_VAR(example::BaseExample::theThing));
 }
 
+enum_<example::module::Enum>("Enum", DOXY_ENUM(example::module::Enum))
+    .value("ONE", example::module::ENUM_ONE);
+
 scope module = class_<dummy_namespace>("module", no_init);
 
 class_<example::module::Example> exampleWrapper(

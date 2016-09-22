@@ -175,17 +175,13 @@ class DoxygenFunctionDirective(BaseDirective):
 
         node = DocStringNode()
         top_node = node_stack[0]
-        node['type'] = 'function'
-        node['doxygen_id'] = top_node.get_id()
 
         definition = top_node.get_definition()
         # Not sure if this works always (e.g. if templates are involved), but
         # at least works for other non templated member methods
-        node['unmangled_name'] = definition.split()[-1]
         scope_type, scope, id = doxygen_mangling.unmangleId(top_node.get_id())
-        node['unmangled_fqname'] = (('' if scope == '' else scope + '::') +
-                                    (id if id != '' else top_node.get_name()) +
-            signature)
+        node['fqname'] = (('' if scope == '' else scope + '::') +
+                          (id if id != '' else top_node.get_name()) + signature)
 
         nodes = self.render(node_stack, project_info, filter_, target_handler, NullMaskFactory(),
                             self.directive_args)
@@ -338,12 +334,9 @@ class DoxygenClassLikeDirective(BaseDirective):
 
         node = DocStringNode()
         top_node = node_stack[0]
-        node['type'] = 'class'
-        node['doxygen_id'] = top_node.refid
-        node['unmangled_name'] = top_node.get_name()
         scope_type, scope, id = doxygen_mangling.unmangleId(top_node.refid)
-        node['unmangled_fqname'] = (('' if scope == '' else scope + '::') +
-                                    (id if id != '' else top_node.get_name()))
+        node['fqname'] = (('' if scope == '' else scope + '::') +
+                          (id if id != '' else top_node.get_name()))
 
         mask_factory = NullMaskFactory()
         nodes = self.render(node_stack, project_info, filter_, target_handler, mask_factory,
@@ -526,13 +519,7 @@ class DoxygenBaseItemDirective(BaseDirective):
         node_stack = matches[0]
 
         node = DocStringNode()
-        top_node = node_stack[0]
-        node['type'] = 'class'
-        node['doxygen_id'] = top_node.get_id()
-        node['unmangled_name'] = top_node.get_name()
-        scope_type, scope, id = doxygen_mangling.unmangleId(top_node.get_id())
-        node['unmangled_fqname'] = (('' if scope == '' else scope + '::') +
-                                    (id if id != '' else top_node.get_name()))
+        node['fqname'] = ('' if namespace == '' else namespace + '::') + name
 
         mask_factory = NullMaskFactory()
         nodes = self.render(node_stack, project_info, filter_, target_handler, mask_factory,
@@ -566,7 +553,6 @@ class DoxygenDefineDirective(DoxygenBaseItemDirective):
 class DoxygenEnumDirective(DoxygenBaseItemDirective):
 
     kind = "enum"
-
 
 class DoxygenEnumValueDirective(DoxygenBaseItemDirective):
 

@@ -53,8 +53,10 @@ def append_text(output, nodes):
             # This is the enum value name
             desc_name = node[0][1]
             assert(type(desc_name) == sphinx.addnodes.desc_name)
-            output.write("* " + desc_name[0] + ": ")
+            output.write("* " + desc_name[0])
             # And this is the description
+            if len(node[1]) != 0:
+                output.write(": ")
             desc_content = node[1]
             assert(type(desc_content) == sphinx.addnodes.desc_content)
             append_text(output, desc_content)
@@ -124,10 +126,10 @@ class CDocstringBuilder(Builder) :
         # Sorting the names alphabetically to minimize changes over reviews.
         nodes = []
         for node in doctree:
-            if not 'unmangled_name' in node :
+            if not 'fqname' in node :
                 # Skipping node without name
                 continue
-            nodes.append((node['unmangled_fqname'], node))
+            nodes.append((node['fqname'], node))
         nodes.sort()
 
         for name, node_stack in nodes:
