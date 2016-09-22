@@ -1,8 +1,38 @@
-# docstrings()
-#   blah
+# Copyright (c) 2016, EPFL/Blue Brain Project
+#                     Juan Hernando <jhernando@fi.upm.es>
 #
-# Input variables
-#   DOCSTRINGS_EXCLUDE_SYMBOLS
+# This file is part of Pydoxine <https://github.com/BlueBrain/Pydoxine>
+#
+# This library is free software; you can redistribute it and/or modify it under
+# the terms of the GNU Lesser General Public License version 3.0 as published
+# by the Free Software Foundation.
+#
+# This library is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
+# details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with this library; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+# This script provides the function docstrings() to generate strings to be
+# used as docstrings in Boost.Python.
+#
+# The function takes two input variables:
+#  - BOOST_PYTHON_SOURCES: the list of wrapping sources.
+#  - CPP_HEADERS: the list of  C++ headers of the wrapped API.
+#
+# The user relevant output of this function is two C++ files and a CMake target.
+# The files are:
+#  - ${PROJECT_BINARY_DIR}/docstrings/cpp/docstrings.h, to be included in the
+#    wrapping sources, provides the macros DOXY_CLASS, DOXY_FN and DOXY_ENUM to
+#    be used in the wrapping functions.
+#  - ${PROJECT_BINARY_DIR}/docstrings/cpp/docstrings.cpp and needs to be
+#    included as part of the source files of the wrapping library.
+#
+# The CMake target is called ${PROJECT_NAME}-docstrings and is should be added
+# as a dependency as the wrapping library target.
 
 common_find_package(Sphinx 1.3)
 common_find_package(Doxygen)

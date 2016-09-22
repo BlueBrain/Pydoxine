@@ -89,7 +89,7 @@ EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       =
 # Adding a explicit exclude list to make it easier to detect non intentionally
 # undocumented classes when HIDE_UNDOC_CLASSES is set to NO
-EXCLUDE_SYMBOLS        = ${DOCSTRINGS_EXCLUDE_SYMBOLS}
+EXCLUDE_SYMBOLS        =
 EXAMPLE_PATTERNS       = *
 EXAMPLE_RECURSIVE      = NO
 IMAGE_PATH             =

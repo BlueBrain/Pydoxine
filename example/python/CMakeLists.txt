@@ -12,7 +12,7 @@ include_directories(${PROJECT_BINARY_DIR}/docstrings/cpp
 
 add_library(example SHARED example.cpp
   ${PROJECT_BINARY_DIR}/docstrings/cpp/docstrings.cpp)
-add_dependencies(example PyxygenExample-docstrings)
+add_dependencies(example PydoxineExample-docstrings)
 
 target_link_libraries(example ${PYTHON_LIBRARIES}
                       ${Boost_PYTHON${USE_BOOST_PYTHON_VERSION}_LIBRARY})
