@@ -49,7 +49,7 @@ for filename in boost_python_sources :
       # preprocessing the input filename to remove comments
       rawcppdata = comment_remover(rawcppdata)
 
-      functions_temp = re.findall('DOXY_FN\(\s*([\w:]*)\s*(\(.*\))?\)',
+      functions_temp = re.findall('DOXY_FN\(\s*([\w:]*)\s*(\([^)]*\)(?: const)?)?\)',
                                   rawcppdata)
       while len(functions_temp) > 0 and functions_temp[0] == 'name':
           functions_temp.pop(0) # remove the #define's
@@ -82,7 +82,7 @@ for f, s in functions :
     else :
         index.write('.. doxygenfunction:: %s%s\n'
                     '   :no-header:\n'
-                    '   :project: ${PROJECT_NAME}\n\n' % (f, s[:-1]))
+                    '   :project: ${PROJECT_NAME}\n\n' % (f, s))
 
 for e in enums :
     index.write('.. doxygenenum:: %s\n'
