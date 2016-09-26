@@ -69,7 +69,7 @@ on ${PROJECT_NAME}-docstrings (a target created by the macro docstrings):
 
     add_dependencies(your_target ${PROJECT_NAME}-docstrings)
 
-## Bosst.Python sources modifications
+## Boost.Python sources modifications
 
 In your Boost.Python sources you have to include the header file
 ${PROJECT_BINARY_DIR}/docstrigngs/docstrings.h.
