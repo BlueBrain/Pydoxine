@@ -50,18 +50,19 @@ The instruction to do it using git submodules follow:
 Assuming you have imported Pydoxine under ${PROJECT_SOURCE_DIR}/docstrings,
 the code that you need to add to your CMake scripts is this:
 
-    list(APPEND CMAKE_MODULE_PATH ${PROJET_SOURCE_DIR}/docstrings/CMake)
+    list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/docstrings/CMake)
     include(PythonDocstrings)
 
     docstrings(WRAPPING_SOURCES WRAPPED_HEADERS)
 
 where `WRAPPED_SOURCES' is a CMake variable with a list of Boost.Python C++
 sources and `WRAPPED_HEADERS' is another one with the header source files for the
-doxygen documentation.
+doxygen documentation. One limitation of the current implementation is that the
+header and source file lists must use absolute paths.
 
 The macro `docstrings' will parse the Boost.Python sources and produce a file
-called init_docstrings.cpp in ${PROJECT_BUILD_DIR}/docstrings/cpp. This file
-is included from ${PROJECT_BUILD_DIR}/docstrings/cpp/docstrings.cpp.
+called init_docstrings.cpp in ${PROJECT_BINARY_DIR}/docstrings/cpp. This file
+is included from ${PROJECT_BINARY_DIR}/docstrings/cpp/docstrings.cpp.
 
 The CMake target that builds your Python module must include
 docstrings/cpp/docstrings.cpp as a source file and it must be made depend
@@ -72,7 +73,7 @@ on ${PROJECT_NAME}-docstrings (a target created by the macro docstrings):
 ## Boost.Python sources modifications
 
 In your Boost.Python sources you have to include the header file
-${PROJECT_BINARY_DIR}/docstrigngs/docstrings.h.
+${PROJECT_BINARY_DIR}/docstrings/cpp/docstrings.h.
 
 This header defines the macros DOXY_CLASS, DOXY_ENUM and DOXY_FN. These macros
 generate the code that obtains the C-style string to be used as docstring
