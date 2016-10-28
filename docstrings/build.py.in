@@ -71,7 +71,6 @@ for filename in boost_python_sources :
           vars_temp.pop(0) # remove the #define's
       variables += vars_temp
 
-
 index = open('index.rst', 'w')
 
 for f, s in functions :

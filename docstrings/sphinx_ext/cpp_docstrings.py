@@ -73,7 +73,7 @@ def append_text(output, nodes):
             # This is the enum value name
             desc_name = node[0][1]
             assert(type(desc_name) == sphinx.addnodes.desc_name)
-            output.write("* " + desc_name[0])
+            output.write(" * " + desc_name[0])
             # And this is the description
             if len(node[1]) != 0:
                 output.write(": ")
