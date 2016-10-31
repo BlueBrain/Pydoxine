@@ -23,6 +23,10 @@
 #  - BOOST_PYTHON_SOURCES: the list of wrapping sources.
 #  - CPP_HEADERS: the list of  C++ headers of the wrapped API.
 #
+# The following global variables can control the behaviour of docstrings
+#  - DOCSTRINGS_PREDEFINED_MACROS: A string to be appended to the PREDEFINED
+#    parameter of the doxygen configuration.
+#
 # The user relevant output of this function is two C++ files and a CMake target.
 # The files are:
 #  - ${PROJECT_BINARY_DIR}/docstrings/cpp/docstrings.h, to be included in the
