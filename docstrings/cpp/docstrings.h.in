@@ -20,34 +20,37 @@
 #ifndef ${PROJECT_NAME}_DOCSTRINGS_H
 #define ${PROJECT_NAME}_DOCSTRINGS_H
 
-#include <locale>
-#include <sstream>
-#include <map>
-#include <stdio.h>
-#include <exception>
+#if defined ${PROJECT_NAME}_USE_SPHINX && ${PROJECT_NAME}_USE_DOXYGEN
 
-#include <iostream>
+#  include <map>
+#  include <string>
 
-#  define DOXY_ENUM(name) \
-     ${PROJECT_namespace}::docstrings::getDoxygenComment(#name)
-#  define DOXY_FN(name) \
-     ${PROJECT_namespace}::docstrings::getDoxygenComment(#name)
-#  define DOXY_VAR(name) \
-     ${PROJECT_namespace}::docstrings::getDoxygenComment(#name)
-#  define DOXY_CLASS(name) \
-     ${PROJECT_namespace}::docstrings::getDoxygenComment(#name)
+#  define DOXY_ENUM( name ) \
+     ${PROJECT_namespace}::docstrings::getDoxygenComment( #name )
+#  define DOXY_FN( name ) \
+     ${PROJECT_namespace}::docstrings::getDoxygenComment( #name )
+#  define DOXY_VAR( name ) \
+     ${PROJECT_namespace}::docstrings::getDoxygenComment( #name )
+#  define DOXY_CLASS( name ) \
+     ${PROJECT_namespace}::docstrings::getDoxygenComment( #name )
 
 namespace ${PROJECT_namespace}
 {
 namespace docstrings
 {
 
-void initDocStrings(std::map<std::string,std::string>& comments);
+void initDocStrings( std::map< std::string, std::string >& comments );
 
-const char *getDoxygenComment(const std::string &name);
+const char *getDoxygenComment( const std::string &name );
 
 } // end namespace docstrings
 }
 
+#else
+#  define DOXY_ENUM( ... ) ""
+#  define DOXY_FN( ... ) ""
+#  define DOXY_VAR( ... ) ""
+#  define DOXY_CLASS( ... ) ""
+#endif
 
 #endif
