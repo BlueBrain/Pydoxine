@@ -17,8 +17,11 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#if defined ${PROJECT_NAME}_USE_SPHINX && ${PROJECT_NAME}_USE_DOXYGEN
+
 #include "docstrings.h"
 
+#include <iostream>
 #include <map>
 
 namespace ${PROJECT_namespace}
@@ -26,29 +29,30 @@ namespace ${PROJECT_namespace}
 namespace docstrings
 {
 
-void initDocStrings(std::map<std::string,std::string>& comments);
+typedef std::map< std::string, std::string > StringMap;
 
-const char *getDoxygenComment(const std::string &key)
+void initDocStrings( StringMap& comments );
+
+const char *getDoxygenComment( const std::string &key )
 {
-    static std::map<std::string, std::string> s_comments;
+    static StringMap s_comments;
 
-    if (s_comments.empty())
-        initDocStrings(s_comments);
+    if( s_comments.empty() )
+        initDocStrings( s_comments );
 
-    std::map<std::string, std::string>::const_iterator c =
-        s_comments.find(key);
-    if (c == s_comments.end())
+    const StringMap::const_iterator entry = s_comments.find( key );
+    if( entry == s_comments.end( ))
     {
         std::cerr << "Warning: Doxygen to Docstring not found for key: " << key
                   << std::endl;
         return "";
     }
 
-    return c->second.c_str();
+    return entry->second.c_str();
 }
 
 #include "init_docstrings.cpp"
 
 }
 }
-
+#endif

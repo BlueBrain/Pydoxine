@@ -38,8 +38,12 @@
 # The CMake target is called ${PROJECT_NAME}-docstrings and is should be added
 # as a dependency as the wrapping library target.
 
-common_find_package(Sphinx 1.3)
-common_find_package(Doxygen)
+if(NOT DOXYGEN_FOUND)
+  find_package(Doxygen)
+endif()
+if(NOT SPHINX_FOUND)
+  find_package(Sphinx 1.3)
+endif()
 
 if(DOXYGEN_FOUND AND SPHINX_FOUND)
   add_definitions(-D${PROJECT_NAME}_USE_SPHINX -D${PROJECT_NAME}_USE_DOXYGEN)
