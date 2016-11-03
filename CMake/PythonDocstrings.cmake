@@ -85,7 +85,7 @@ function(DOCSTRINGS BOOST_PYTHON_SOURCES CPP_HEADERS)
   add_custom_command(
     OUTPUT ${PROJECT_BINARY_DIR}/docstrings/xml/index.xml
     COMMAND ${DOXYGEN_EXECUTABLE} wrapping.cfg
-    DEPENDS ${PROJECT_BINARY_DIR}/docstrings/wrapping.cfg
+    DEPENDS ${_docstrings_path}/docstrings/wrapping.cfg.in
             ${_docstrings_wrapped_headers}
     WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/docstrings)
 
@@ -98,8 +98,8 @@ function(DOCSTRINGS BOOST_PYTHON_SOURCES CPP_HEADERS)
       ${SPHINX_EXECUTABLE} -q -b docstrings ${PROJECT_BINARY_DIR}/docstrings
       ${PROJECT_BINARY_DIR}/docstrings/cpp
     DEPENDS ${PROJECT_BINARY_DIR}/docstrings/xml/index.xml
-            ${PROJECT_BINARY_DIR}/docstrings/conf.py
-            ${PROJECT_BINARY_DIR}/docstrings/build.py
+            ${_docstrings_path}/docstrings/sphinx_conf.py.in
+            ${_docstrings_path}/docstrings/build.py.in
             ${_docstrings_wrapping_sources}
             ${_docstrings_wrapped_headers}
     WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/docstrings/cpp)
