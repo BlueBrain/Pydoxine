@@ -19,9 +19,12 @@
 # This script provides the function docstrings() to generate strings to be
 # used as docstrings in Boost.Python.
 #
-# The function takes two input variables:
-#  - BOOST_PYTHON_SOURCES: the list of wrapping sources.
-#  - CPP_HEADERS: the list of  C++ headers of the wrapped API.
+# The function takes three input variables:
+#  - BOOST_PYTHON_SOURCES: the list of wrapping sources. The prefix of relative
+#    paths is assumed to be CMAKE_CURRENT_SOURCE_DIR.
+#  - CPP_HEADERS: the list of  C++ headers of the wrapped API. The prefix of
+#    relative paths is assumed to be 'CMAKE_CURRENT_SOURCE_DIR/..'.
+#  - DOCSTRINGS_INCLUDE_PATH: include path to project headers
 #
 # The following global variables can control the behaviour of docstrings
 #  - DOCSTRINGS_PREDEFINED_MACROS: A string to be appended to the PREDEFINED
@@ -55,11 +58,27 @@ endif()
 get_filename_component(_docstrings_path ${CMAKE_CURRENT_LIST_FILE} DIRECTORY)
 set(_docstrings_path ${_docstrings_path}/..)
 
-function(DOCSTRINGS BOOST_PYTHON_SOURCES CPP_HEADERS)
-  set(_docstrings_wrapped_headers ${${CPP_HEADERS}})
+function(DOCSTRINGS BOOST_PYTHON_SOURCES CPP_HEADERS DOCSTRINGS_INCLUDE_PATH)
   set(_doxygen_config_input_files)
-  set(_docstrings_wrapping_sources ${${BOOST_PYTHON_SOURCES}})
-  foreach(HEADER ${_docstrings_wrapped_headers})
+
+  set(_docstrings_wrapping_sources)
+  foreach(_source ${${BOOST_PYTHON_SOURCES}})
+    if(IS_ABSOLUTE ${_source})
+      list(APPEND _docstrings_wrapping_sources ${_source})
+    else()
+      list(APPEND _docstrings_wrapping_sources
+        ${CMAKE_CURRENT_SOURCE_DIR}/${_source})
+    endif()
+  endforeach()
+
+  set(_docstrings_wrapped_headers)
+  foreach(HEADER ${${CPP_HEADERS}})
+    if(IS_ABSOLUTE ${HEADER})
+      list(APPEND _docstrings_wrapped_headers ${HEADER})
+    else()
+      set(HEADER ${CMAKE_CURRENT_SOURCE_DIR}/../${HEADER})
+      list(APPEND _docstrings_wrapped_headers ${HEADER})
+    endif()
     set(_doxygen_config_input_files "${_doxygen_config_input_files} ${HEADER}")
   endforeach()
 
@@ -91,12 +110,10 @@ function(DOCSTRINGS BOOST_PYTHON_SOURCES CPP_HEADERS)
 
   add_custom_command(
     OUTPUT ${PROJECT_BINARY_DIR}/docstrings/cpp/init_docstrings.cpp
-    COMMAND
-      ${PYTHON_EXECUTABLE} ${PROJECT_BINARY_DIR}/docstrings/build.py
-        ${PROJECT_BINARY_DIR}/docstrings/xml ${_docstrings_wrapping_sources}
-    COMMAND
-      ${SPHINX_EXECUTABLE} -q -b docstrings ${PROJECT_BINARY_DIR}/docstrings
-      ${PROJECT_BINARY_DIR}/docstrings/cpp
+    COMMAND ${PYTHON_EXECUTABLE} ${PROJECT_BINARY_DIR}/docstrings/build.py
+      ${PROJECT_BINARY_DIR}/docstrings/xml ${_docstrings_wrapping_sources}
+    COMMAND ${SPHINX_EXECUTABLE} -q -b docstrings
+      ${PROJECT_BINARY_DIR}/docstrings ${PROJECT_BINARY_DIR}/docstrings/cpp
     DEPENDS ${PROJECT_BINARY_DIR}/docstrings/xml/index.xml
             ${_docstrings_path}/docstrings/sphinx_conf.py.in
             ${_docstrings_path}/docstrings/build.py.in
@@ -104,6 +121,6 @@ function(DOCSTRINGS BOOST_PYTHON_SOURCES CPP_HEADERS)
             ${_docstrings_wrapped_headers}
     WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/docstrings/cpp)
 
-  add_custom_target(
-    ${PROJECT_NAME}-docstrings DEPENDS ${PROJECT_BINARY_DIR}/docstrings/cpp/init_docstrings.cpp)
+  add_custom_target(${PROJECT_NAME}-docstrings
+    DEPENDS ${PROJECT_BINARY_DIR}/docstrings/cpp/init_docstrings.cpp)
 endfunction(DOCSTRINGS)
