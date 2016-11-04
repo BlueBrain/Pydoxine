@@ -73,4 +73,6 @@ endif()
 include(FindPackageHandleStandardArgs)
 
 find_package_handle_standard_args(Sphinx DEFAULT_MSG SPHINX_EXECUTABLE)
-
+if(PYTHON_EXECUTABLE) # prefix with python version used by build to avoid errors
+  set(SPHINX_EXECUTABLE ${PYTHON_EXECUTABLE} ${SPHINX_EXECUTABLE})
+endif()
