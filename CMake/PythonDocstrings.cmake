@@ -20,11 +20,11 @@
 # used as docstrings in Boost.Python.
 #
 # The function takes three input variables:
+#  - BOOST_PYTHON_SOURCES: the list of wrapping sources. The prefix of relative
+#    paths is assumed to be CMAKE_CURRENT_SOURCE_DIR.
+#  - CPP_HEADERS: the list of  C++ headers of the wrapped API. The prefix of
+#    relative paths is assumed to be 'CMAKE_CURRENT_SOURCE_DIR/..'.
 #  - DOCSTRINGS_INCLUDE_PATH: include path to project headers
-#  - BOOST_PYTHON_SOURCES: the list of wrapping sources. Relative paths are
-#    assumed wrt be CMAKE_CURRENT_SOURCE_DIR.
-#  - CPP_HEADERS: the list of  C++ headers of the wrapped API. Relative paths
-#    are assumed wrt be 'CMAKE_CURRENT_SOURCE_DIR/..'.
 #
 # The following global variables can control the behaviour of docstrings
 #  - DOCSTRINGS_PREDEFINED_MACROS: A string to be appended to the PREDEFINED
