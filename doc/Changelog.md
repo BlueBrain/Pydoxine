@@ -1,7 +1,9 @@
 Changelog {#Changelog}
 =========
 
-# master
+# git master
+
+# Release 1.0 (09-12-2016)
 
 * [7](https://github.com/BlueBrain/Pydoxine/pull/7):
   * Added the alias for the custom Doxygen directive \env.
