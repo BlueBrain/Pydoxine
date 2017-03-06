@@ -1,5 +1,5 @@
-/* Copyright (c) 2016, EPFL/Blue Brain Project
- *                     Juan Hernando <jhernando@fi.upm.es>
+/* Copyright (c) 2016-2017, EPFL/Blue Brain Project
+ *                          Juan Hernando <juan.hernando@epfl.ch>
  *
  * This file is part of Pydoxine <https://github.com/BlueBrain/Pydoxine>
  *
@@ -33,8 +33,11 @@ void (module::Example::*Example_publicMethod1)() =
 void (module::Example::*Example_publicMethod2)(int, std::string) =
     &module::Example::publicMethod;
 
-class dummy_namespace {};
+class dummy_namespace
+{
+};
 
+// clang-format off
 BOOST_PYTHON_MODULE(_example)
 {
 
@@ -52,7 +55,7 @@ class_<BaseExample> baseExampleWrapper(
 
     baseExampleWrapper
         .def_readonly("finished", &BaseExample::theThing,
-                      DOXY_VAR(example::BaseExample::theThing));
+                      DOXY_VAR( example::BaseExample::theThing));
 }
 
 enum_<example::module::Enum>("Enum", DOXY_ENUM(example::module::Enum))
@@ -71,8 +74,8 @@ class_<example::module::Example> exampleWrapper(
         .def("publicMethod", Example_publicMethod2,
              DOXY_FN(example::module::Example::publicMethod(int, std::string)))
         .def("f", &module::Example::f,
-             DOXY_FN(example::module::Example::f))
-        ;
+             DOXY_FN(example::module::Example::f));
 }
+// clang-format on
 
 }
