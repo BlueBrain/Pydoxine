@@ -1,5 +1,5 @@
-/* Copyright (c) 2016, EPFL/Blue Brain Project
- *                     Juan Hernando <jhernando@fi.upm.es>
+/* Copyright (c) 2016-2017, EPFL/Blue Brain Project
+ *                          Juan Hernando <juan.hernando@epfl.ch>
  *
  * This file is part of Pydoxine <https://github.com/BlueBrain/Pydoxine>
  *
@@ -29,19 +29,19 @@ namespace ${PROJECT_namespace}
 namespace docstrings
 {
 
-typedef std::map< std::string, std::string > StringMap;
+typedef std::map<std::string, std::string> StringMap;
 
-void initDocStrings( StringMap& comments );
+void initDocStrings(StringMap& comments);
 
-const char *getDoxygenComment( const std::string &key )
+const char *getDoxygenComment(const std::string &key)
 {
     static StringMap s_comments;
 
-    if( s_comments.empty() )
-        initDocStrings( s_comments );
+    if (s_comments.empty())
+        initDocStrings(s_comments);
 
-    const StringMap::const_iterator entry = s_comments.find( key );
-    if( entry == s_comments.end( ))
+    const StringMap::const_iterator entry = s_comments.find(key);
+    if (entry == s_comments.end())
     {
         std::cerr << "Warning: Doxygen to Docstring not found for key: " << key
                   << std::endl;

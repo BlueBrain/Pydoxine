@@ -1,5 +1,5 @@
-/* Copyright (c) 2016, EPFL/Blue Brain Project
- *                     Juan Hernando <jhernando@fi.upm.es>
+/* Copyright (c) 2016-2017, EPFL/Blue Brain Project
+ *                          Juan Hernando <juan.hernando@epfl.ch>
  *
  * This file is part of Pydoxine <https://github.com/BlueBrain/Pydoxine>
  *
@@ -24,7 +24,6 @@
 
 namespace example
 {
-
 /**
     \brief A class with a short description that is longer than normal to
     test how the final layout looks like.
@@ -47,13 +46,13 @@ public:
     */
     enum Things
     {
-    #ifdef DOXYGEN_TO_BREATHE
+#ifdef DOXYGEN_TO_BREATHE
         FOO = 0, //!< A foo thing
-        BAR = 1 //!< A bar thing
-    #else
+        BAR = 1  //!< A bar thing
+#else
         THING_FOO = 0, //!< A foo thing
-        THING_BAR = 1 //!< A bar thing
-    #endif
+        THING_BAR = 1  //!< A bar thing
+#endif
     };
 
     /** A static class member. */
@@ -62,9 +61,11 @@ public:
 
 namespace module
 {
-
 /** A free enum with just one value */
-enum Enum { ENUM_ONE };
+enum Enum
+{
+    ENUM_ONE
+};
 
 /**
 \brief This is the brief
@@ -87,7 +88,6 @@ public:
 
     /** \brief The pulic method */
     void publicMethod() {}
-
     /**
         An overload of the public method with arguments.
 
@@ -99,7 +99,6 @@ public:
         @see publicMethod
     */
     void publicMethod(int a, std::string b) {}
-
     /** \brief A method without much to say but a brief comment two lines
      long (in the final output).
 
@@ -109,13 +108,10 @@ public:
      @return int
     */
     int f(int x) const { return 0; }
-
 protected:
     /** The protected method */
     void protectedMethod() {}
 };
-
 }
-
 }
 #endif
