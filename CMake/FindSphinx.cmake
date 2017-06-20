@@ -2,6 +2,10 @@
 # - This module looks for Sphinx
 # Find the Sphinx documentation generator
 #
+# Optional inputs:
+#  - environment variable SPHINX_ROOT to hint installed location
+#  - CMake variable SPHINX_ROOT to hint installed location
+#
 # This modules defines
 # SPHINX_EXECUTABLE
 # SPHINX_FOUND
@@ -12,6 +16,8 @@ find_program(SPHINX_EXECUTABLE
   /usr/bin
   /usr/local/bin
   /opt/local/bin
+  $ENV{SPHINX_ROOT}/bin
+  ${SPHINX_ROOT}/bin
   DOC "Sphinx documentation generator"
 )
 
@@ -28,7 +34,9 @@ if(NOT SPHINX_EXECUTABLE)
       PATHS
         /usr/bin
         /usr/local/bin
-        /opt/loca/bin
+        /opt/local/bin
+        $ENV{SPHINX_ROOT}/bin
+        ${SPHINX_ROOT}/bin
       DOC "Sphinx documentation generator"
     )
   endforeach()
