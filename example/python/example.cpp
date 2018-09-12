@@ -28,10 +28,10 @@ BaseExample::Things BaseExample::theThing;
 
 #include "docstrings.h"
 
-void (module::Example::*Example_publicMethod1)() =
-    &module::Example::publicMethod;
-void (module::Example::*Example_publicMethod2)(int, std::string) =
-    &module::Example::publicMethod;
+void (example::module::Example::*Example_publicMethod1)() =
+    &example::module::Example::publicMethod;
+void (example::module::Example::*Example_publicMethod2)(int, std::string) =
+    &example::module::Example::publicMethod;
 
 class dummy_namespace
 {
@@ -73,7 +73,7 @@ class_<example::module::Example> exampleWrapper(
              DOXY_FN(example::module::Example::publicMethod()))
         .def("publicMethod", Example_publicMethod2,
              DOXY_FN(example::module::Example::publicMethod(int, std::string)))
-        .def("f", &module::Example::f,
+        .def("f", &example::module::Example::f,
              DOXY_FN(example::module::Example::f));
 }
 // clang-format on
