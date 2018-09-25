@@ -45,7 +45,7 @@ if(NOT DOXYGEN_FOUND)
   find_package(Doxygen)
 endif()
 if(NOT SPHINX_FOUND)
-  find_package(Sphinx 1.3)
+  find_package(Sphinx EXACT 1.3)
 endif()
 
 if(DOXYGEN_FOUND AND SPHINX_FOUND)
