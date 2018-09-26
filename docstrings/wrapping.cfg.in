@@ -97,6 +97,11 @@ INPUT_FILTER           =
 FILTER_PATTERNS        =
 FILTER_SOURCE_FILES    = NO
 #---------------------------------------------------------------------------
+# Configuration options related to general output
+#---------------------------------------------------------------------------
+HAVE_DOT               = NO
+GENERATE_LATEX         = NO
+#---------------------------------------------------------------------------
 # configuration options related to the XML output
 #---------------------------------------------------------------------------
 GENERATE_XML           = YES
