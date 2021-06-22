@@ -90,3 +90,10 @@ For optimal results include this line at the beginning of the module:
 
 The directory called example contains a full project showing how all the pieces
 fit together.
+
+# Funding & Acknowledgment
+ 
+The development of this software was supported by funding to the Blue Brain Project,
+a research center of the École polytechnique fédérale de Lausanne (EPFL), from the
+Swiss government’s ETH Board of the Swiss Federal Institutes of Technology.
+ 
