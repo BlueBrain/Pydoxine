@@ -96,5 +96,22 @@ fit together.
 The development of this software was supported by funding to the Blue Brain Project,
 a research center of the École polytechnique fédérale de Lausanne (EPFL), from the
 Swiss government’s ETH Board of the Swiss Federal Institutes of Technology.
+
+# License
+
+Pydoxine is licensed under the LGPL, unless noted otherwise, e.g., for external dependencies.
+See file LICENSE.txt for the full license.
+
+Copyright (c) 2021 Blue Brain Project/EPFL and contributors.
+
+This project is free software; you can redistribute it and/or modify it under the terms of the
+GNU Lesser General Public License version 3 as published by the Free Software Foundation.
+
+This software is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+the GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License along with this
+library; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+Boston, MA 02110-1301 USA
  
-Copyright (c) 2021 Blue Brain Project/EPFL
